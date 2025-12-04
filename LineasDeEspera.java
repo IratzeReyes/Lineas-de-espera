@@ -84,6 +84,39 @@ public class LineasDeEspera {
                 System.out.println("Numero promedio en el sistema (lC): " + lC);
 
                 break;
+            case 3:
+                // Modelo M/M/1/K
+                // Pedir datos que nos faltan 
+                int k; //probabilidad de rechazp
+                double pKS; //Utiizacion del sistema 
+                double poK; //Probabilidad de que no haya clientes en el sistema
+                double pk; //la probabilidad de que llegues y te rechazen
+                double landaE; //tasa efectiva de llegada
+                double lk; //numero promedio de la cola
+                double wk; //tiempo promedio en la cola
+                //introsucir el dato de k 
+                System.out.println("Introduce la probabilidad de rechazo (K): ");
+                k = lector.nextInt();
+                //CALCULAR FORMULAS
+                //Calcular pKS (Utilizacion del sistema)
+                pKS = (double) landa / niu;
+                //Calcular poK (Probabilidad de que no haya clientes en el sistema)
+                poK = (1 - pKS) / (1 - Math.pow(pKS, k + 1));
+                //Calcular pk (la probabilidad de que llegues y te rechazen)
+                pk = Math.pow(pKS, k) * poK;
+                //Calcular landaE (tasa efectiva de llegada)
+                landaE = landa * (1 - pk);
+                //Calcular lk (numero promedio de la cola)
+                lk = (pKS * (1 - (k+1) * Math.pow(pKS, k) + k* Math.pow(pKS, k+1))) / ((1 - pKS) * (1 - Math.pow(pKS, k +1)));
+                //Calcular wk (tiempo promedio en la cola)
+                wk = lk / landaE;
+                //Mostrando los resultados de las formulas
+
+
+
+
+                break;
+
 
             default:
                 System.out.println("Opcion no valida");
