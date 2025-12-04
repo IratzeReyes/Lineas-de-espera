@@ -2,6 +2,14 @@ import java.util.Scanner;
 public class LineasDeEspera {
     public static void main (String[]args){
         Scanner lector = new Scanner (System.in);
+        int landa; //promedio de llegadas
+        int niu; //promedio de servicio
+        //pedir datos 
+        System.out.println("Introduce Landa (promedio de llegadas): ");
+        landa = lector.nextInt();
+        System.out.println("Introduce Niu (promedio de servicio): ");
+        niu = lector.nextInt();
+
         System.out.println("\n \n \t \tMENU:");
         System.out.println("1. Modelo M/M/1");
         System.out.println("2. Modelo M/M/c");
@@ -11,19 +19,12 @@ public class LineasDeEspera {
         switch (opcion){
             case 1:
                 //modelo M/M/1 primer modelo
-                //se pide primero los datos landa y Niu
-                int landa; //promedio de llegadas
-                int niu; //promedio de servicio
+                //se coloca las variables para guardar los datos 
                 double p; //probabilidad e encontrar ocupado
-                int lq; //numero promedio de clientes esperando en la cola 
-                int wq; //tiempo promedio de espera en la cola
-                int w; //tiempo total en el sistema
-                //pedir datos 
-                System.out.println("Introduce Landa (promedio de llegadas): ");
-                landa = lector.nextInt();
-                System.out.println("Introduce Niu (promedio de servicio): ");
-                niu = lector.nextInt();
-                //calcular formulas
+                double lq; //numero promedio de clientes esperando en la cola 
+                double wq; //tiempo promedio de espera en la cola
+                double w; //tiempo total en el sistema
+                //CALCULAR FORMULAS
                 //calcular p (utilizacion del sistema promedio)
                 p= landa/niu;
                 //calcular Lq (numero promedio de clientes en la cola)
@@ -38,17 +39,80 @@ public class LineasDeEspera {
                 System.out.println("Numero promedio de clientes en la cola (Lq): " + lq); //mostrando Lq
                 System.out.println("Tiempo promedio de espera en la cola (Wq): " +wq); //mostrando Wq
                 System.out.println("Tiempo total en el sistema (w): " +w); //mostrando w
-
-
-
-
-                
                 break;
-            
+            case 2:
+                // Modelo M/M/C
+                //pedir numero de servidores
+                int c; //numero de servidores
+                System.out.println("Introduce el numero de servidores (c): ");
+                c = lector.nextInt();
+                //se coloca las variables para guardar los datos
+                double a; //constante
+                double pC; //utilizacion por servidor
+                double po; //probabilidad de que no haya clientes en el sistema
+                double pEspera; //probabilidad de que un cliente tenga que esperar
+                double lqC; //Longitud promedio en cola
+                double wqC; //Tiempo promedio de espera en cola
+                double wC; //Tiempo total en el sistema 
+                double lC; //Numero promedio en el sistema
+                //CALCULAR FORMULAS 
+                //Calcular a (constante)
+                a = (double) landa / niu;
+                //Calcular pC (utilizacion por servidor)
+                pC = a / c;
+                //Calcular po (probabilidad de que no haya clientes en el sistema) llamamos a la funcion recursiva
+                po = calcularMMC(landa, niu, c);
+                //Calcular pEspera (probabilidad de que un cliente tenga que esperar) llamamos a la funcion rexcursiva
+                pEspera = calcularPEspera(landa, niu, c);
+                //Calcular LqC (Longitud promedio en cola)
+                lqC = (pEspera * pC) /  (1 - pC);
+                //Calcular WqC (Tiempo promedio de espera en cola)
+                wqC = lqC / landa;
+                //Calcular WC (Tiempo total en el sistema)
+                wC = wqC + (1.0 / niu);
+                //Calcular lC (Numero promedio en el sistema)
+                lC = landa * wC;
+                //Mostrando los resultados de las formulas
+                System.out.println("Resultados del modelo M/M/C:");
+                System.out.println("valor de la constante (a): " + a);
+                System.out.println("Utilizacion por servidor (pC): " + pC);
+                System.out.println("Probabilidad de que no haya clientes en el sistema (po): " + po);
+                System.out.println("Probabilidad de que un cliente tenga que esperar (pEspera): " + pEspera);
+                System.out.println("Longitud promedio en cola (LqC): " + lqC);
+                System.out.println("Tiempo promedio de espera en cola (WqC): " + wqC);
+                System.out.println("Tiempo total en el sistema (WC): " + wC);
+                System.out.println("Numero promedio en el sistema (lC): " + lC);
+
+                break;
+
             default:
                 System.out.println("Opcion no valida");
         }
     }
+    //se crea una funcion para  el factorial  y para po y pEspera
+    public static long factorial(int n){
+        if (n == 0 || n == 1){
+            return 1;
+        } else {
+            return n * factorial(n - 1);
+        }
+    }
+    public static double calcularMMC(int landa, int niu, int c){
+        double a = landa / niu;
+        double sumatoria = 0;
+        for (int n = 0; n < c; n++){
+            sumatoria += Math.pow(a,n) / factorial(n);
+        }
+        double sumatoria2 = (Math.pow(a, c))/ (factorial(c) * (1.0 / (1 - (a / c))));
+        return  1.0 / (sumatoria + sumatoria2);
 
+    }
+    public static double calcularPEspera(int landa, int niu, int c){
+        double a = landa / niu;
+        double po = calcularMMC(landa, niu, c);
+        double pEspera = (Math.pow(a, c) / (factorial(c) * (1.0 - (a / c) ))) * po;
+        return pEspera;
+    }
 } 
+
     
