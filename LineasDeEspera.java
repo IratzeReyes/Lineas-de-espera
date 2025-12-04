@@ -2,13 +2,13 @@ import java.util.Scanner;
 public class LineasDeEspera {
     public static void main (String[]args){
         Scanner lector = new Scanner (System.in);
-        int landa; //promedio de llegadas
-        int niu; //promedio de servicio
+        double landa; //promedio de llegadas
+        double niu; //promedio de servicio
         //pedir datos 
         System.out.println("Introduce Landa (promedio de llegadas): ");
-        landa = lector.nextInt();
+        landa = lector.nextDouble();
         System.out.println("Introduce Niu (promedio de servicio): ");
-        niu = lector.nextInt();
+        niu = lector.nextDouble();
 
         System.out.println("\n \n \t \tMENU:");
         System.out.println("1. Modelo M/M/1");
@@ -28,7 +28,7 @@ public class LineasDeEspera {
                 //calcular p (utilizacion del sistema promedio)
                 p= landa/niu;
                 //calcular Lq (numero promedio de clientes en la cola)
-                lq = (int) ((Math.pow(landa, 2))/(niu*(niu-landa)));
+                lq =  ((Math.pow(landa, 2))/(niu*(niu-landa)));
                 //calcular Wq (tiempo promedio de espera en la cola)
                 wq = lq/landa;
                 //calcular W (tiempo total en el sistema)
@@ -111,36 +111,38 @@ public class LineasDeEspera {
                 //Calcular wk (tiempo promedio en la cola)
                 wk = lk / landaE;
                 //Mostrando los resultados de las formulas
-
-
-
-
+                System.out.println("Resultados del modelo M/M/1/K:");
+                System.out.println("Utilizacion del sistema (pKS): " + pKS);
+                System.out.println("Probabilidad de que no haya clientes en el sistema (poK): " + poK);
+                System.out.println("Probabilidad de que llegues y te rechazen (pk): " + pk);
+                System.out.println("Tasa efectiva de llegada (landaE): " + landaE);
+                System.out.println("Numero promedio de la cola (lk): " + lk);
+                System.out.println("Tiempo promedio en la cola (wk): " + wk);
                 break;
-
-
             default:
                 System.out.println("Opcion no valida");
         }
     }
     //se crea una funcion para  el factorial  y para po y pEspera
     public static long factorial(int n){
-        if (n == 0 || n == 1){
+        if (n <= 1){
             return 1;
         } else {
             return n * factorial(n - 1);
         }
     }
-    public static double calcularMMC(int landa, int niu, int c){
+    public static double calcularMMC(double landa, double niu, int c){
         double a = landa / niu;
         double sumatoria = 0;
         for (int n = 0; n < c; n++){
             sumatoria += Math.pow(a,n) / factorial(n);
         }
-        double sumatoria2 = (Math.pow(a, c))/ (factorial(c) * (1.0 / (1 - (a / c))));
-        return  1.0 / (sumatoria + sumatoria2);
+        double sumatoria2 = (Math.pow(a, c))/ (factorial(c) * (1 - (a / c)));
+        double po =1.0 / (sumatoria + sumatoria2);
+        return  po;
 
     }
-    public static double calcularPEspera(int landa, int niu, int c){
+    public static double calcularPEspera(double landa, double niu, int c){
         double a = landa / niu;
         double po = calcularMMC(landa, niu, c);
         double pEspera = (Math.pow(a, c) / (factorial(c) * (1.0 - (a / c) ))) * po;
